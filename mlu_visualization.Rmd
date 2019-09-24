@@ -1,0 +1,98 @@
+---
+title: "MLU visualization"
+author: "Your name"
+date: "29/8/2017"
+---
+  
+In this script we will make visualization of our newly formed mlu data.
+
+
+--------Part 1: Setup --------
+  
+
+
+1.1)Install and load the libraries "tidyverse" (it includes ggplot, which we will use)
+```{r}
+library(pacman)
+p_load(tidyverse, anytime)
+
+
+```
+# p_load checks to see if a package is installed, and installs it if not, otherwise it does the same as library()
+
+1.2)Set your working directory to the folder where you have saved the mlu data to. Try and use setwd("your path here").If setwd() doesn't work, then run the following command: knitr::opts_knit$set(root.dir = "Replace here with correct patch")
+```{r setup}
+
+```
+
+
+Now we need to read in the mlu data.
+
+```{r}
+getwd()
+
+mlu_data <- read.csv("MLU_overview.csv")
+
+```
+write.csv(mlu_df, file = "mlu_clean2.csv", row.names = F)
+
+Before we can plot, we need to check that the columns are in the right class. As last time, you can do this with str(). Pay attention to date :))
+- Speaker as factor
+- Date as date
+- word_sum as integer
+- utterances as integer
+- mlu as numeric
+```{r}
+mlu_data$Speaker = as.factor(mlu_data$Speaker)
+mlu_data$Date = as.Date(mlu_data$Date)
+
+
+```
+
+
+
+Since we have the data in long-format i.e. mother and child data in the same column, then it's easy to plot both in the same graph!
+  
+First we'll make a scatter-plot of using ggplot. 
+
+a. Create the plot object with the ggplot() function. ( Check ?ggplot() if needed )
+
+The most important arguments are the data, i.e. your data frame, and the aes() arguments. So in aes, you need to specify what to plot on the x and y axis. 
+  - e.g. aes(x= myvariable1, y = myvariable2)
+
+We want "mlu" on y-axis and "Date" on x-axis. 
+
+b. make a scatter-plot by adding the argument geom_point. (see here: http://r-statistics.co/Complete-Ggplot2-Tutorial-Part1-With-R-Code.html)
+
+
+```{r}
+ggplot(mlu_data, aes(x = Date, y = mlu))+
+  geom_point()
+
+```
+
+
+This plot is not very informative. Mainly because it's a mix of the data from the mother and child. The easiest way to discern the two is by giving different colors to the data depending on which speaker it comes from (here is where the long format is handy!).
+Copy the code from the plot above. Inside the aes() function you can set the color equal to "Speaker".
+
+```{r}
+ggplot(mlu_data, aes(x = Date, y = mlu, color = Speaker))+
+  geom_point()
+
+```
+
+BONUS QUESTION:
+  To help our analysis even more, it can be helpful to add a line that sums up the patterns of the dots. In fancies words, let's add a stastical model. You can do this, by adding another "geom" to the previous plot. So copy it, and add geom_smooth(). 
+  
+EXTRA-BONUS:
+How would you make this model linear?
+
+```{r}
+ggplot(mlu_data, aes(x = Date, y = mlu, color = Speaker)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+```
+
+
+
